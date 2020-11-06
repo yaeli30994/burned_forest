@@ -4,5 +4,5 @@
 
 
 #define SIMPLE_EXPRESSION_MAX_LENGTH 32
-int get_burned_trees_num(char *string, char value);
+int get_num_of_cell_type(char* forest, char cell_type);
 #pragma once
