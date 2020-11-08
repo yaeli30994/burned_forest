@@ -116,3 +116,198 @@ int create_output_file(char *forest, int num_of_gens) {
 	}
 	return SUCCESS_CODE;
 }
+
+char* forest_next_step(int forest_size, char *forest_string)//creates another "board"/forest on which we will update the progression after one iteration
+{
+	char *next_step_forest = (char*)malloc(((forest_size*forest_size)+1) * sizeof(char));
+	char neighbours_plus[4];//neighbours above, below, left, right
+	char neighbours_total[8];//neighbours above, below, left, right and diagonally
+	int i,num_neighbours_total_in_array, num_neighbours_plus_in_array; //num_neighbours= how many neighbours exist for a cell. for example, the top corner only has 2 "plus" neighbours (out of the array whose size is 4, and only 3 total neighbours out of the array whose size is 8)
+	if (forest_size == 1)
+	{
+		return forest_string;
+	}
+	for (i = 0; i<(forest_size*forest_size); i++)
+	{
+		Get_neighbours(i, forest_string, forest_size, &neighbours_total, &neighbours_plus, &num_neighbours_total_in_array, &num_neighbours_plus_in_array);
+		Check_neighbours_and_update_cell(i, forest_string, &neighbours_total, &neighbours_plus, &num_neighbours_total_in_array, &num_neighbours_plus_in_array, next_step_forest);
+	}
+	next_step_forest[forest_size * forest_size]= '\0';
+	return next_step_forest;
+}
+
+
+void Get_neighbours(int i, char *forest_string, int forest_size, char *neighbours_total, char *neighbours_plus_shape, int *num_total, int *num_plus)//checks how many neighbours exist in "plus" shape, and in total (including diagonal neighbours)
+{
+	if (top_row(i, forest_size))
+	{
+		if (left_column(i, forest_size)) //top left corner
+		{
+			neighbours_plus_shape[0] = forest_string[i + 1];
+			neighbours_plus_shape[1] = forest_string[i + forest_size];
+			*num_plus = 2;//how many neighbours above, below, to the right or left there are for each cell (out of 4 maximum)
+			neighbours_total[0] = forest_string[i + 1];
+			neighbours_total[1] = forest_string[i + forest_size];
+			neighbours_total[2] = forest_string[i + forest_size + 1];
+			*num_total = 3;//how many neighbours above, below,diagonally or to the right or left there are for each cell (out of 8 maximum)
+		}
+		else if (right_column(i, forest_size)) //top right corner
+		{
+			neighbours_plus_shape[0] = forest_string[i + forest_size];
+			neighbours_plus_shape[1] = forest_string[i - 1];
+			*num_plus = 2;
+			neighbours_total[0] = forest_string[i + forest_size];
+			neighbours_total[1] = forest_string[i - 1];
+			neighbours_total[2] = forest_string[i +forest_size - 1];
+			*num_total = 3;
+		}
+		else //top row but not corner
+		{
+			neighbours_plus_shape[0] = forest_string[i + 1];
+			neighbours_plus_shape[1] = forest_string[i + forest_size];
+			neighbours_plus_shape[2] = forest_string[i - 1];
+			*num_plus = 3;
+			neighbours_total[0] = forest_string[i + 1];
+			neighbours_total[1] = forest_string[i + forest_size];
+			neighbours_total[2] = forest_string[i - 1];
+			neighbours_total[3] = forest_string[i +forest_size - 1];
+			neighbours_total[4] = forest_string[i + forest_size + 1];
+			*num_total = 5;
+		}
+	}
+	else if (bottom_row(i, forest_size))
+	{
+		if (left_column(i, forest_size)) //bottom left corner
+		{
+			neighbours_plus_shape[0] = forest_string[i + 1];
+			neighbours_plus_shape[1] = forest_string[i - forest_size];
+			*num_plus = 2;
+			neighbours_total[0] = forest_string[i + 1];
+			neighbours_total[1] = forest_string[i - forest_size];
+			neighbours_total[2] = forest_string[i - forest_size + 1];
+			*num_total = 3;
+		}
+		else if (right_column(i, forest_size)) //bottom right corner
+		{
+			neighbours_plus_shape[0] = forest_string[i - forest_size];
+			neighbours_plus_shape[1] = forest_string[i - 1];
+			*num_plus = 2;
+			neighbours_total[0] = forest_string[i - forest_size];
+			neighbours_total[1] = forest_string[i - 1];
+			neighbours_total[2] = forest_string[i - forest_size - 1];
+			*num_total = 3;
+		}
+		else //bottom row but not corner
+		{
+			neighbours_plus_shape[0] = forest_string[i + 1];
+			neighbours_plus_shape[1] = forest_string[i - forest_size];
+			neighbours_plus_shape[2] = forest_string[i - 1];
+			*num_plus = 3;
+			neighbours_total[0] = forest_string[i + 1];
+			neighbours_total[1] = forest_string[i - forest_size];
+			neighbours_total[2] = forest_string[i - 1];
+			neighbours_total[3] = forest_string[i - forest_size - 1];
+			neighbours_total[4] = forest_string[i - forest_size + 1];
+			*num_total = 5;
+		}
+	}
+	else if (left_column(i, forest_size)) //but not the corners
+	{
+		neighbours_plus_shape[0] = forest_string[i + 1];
+		neighbours_plus_shape[1] = forest_string[i - forest_size];
+		neighbours_plus_shape[2] = forest_string[i + forest_size];
+		*num_plus = 3;
+		neighbours_total[0] = forest_string[i + 1];
+		neighbours_total[1] = forest_string[i - forest_size];
+		neighbours_total[2] = forest_string[i + forest_size];
+		neighbours_total[3] = forest_string[i - forest_size+1];
+		neighbours_total[4] = forest_string[i + forest_size+1];
+		*num_total = 5;
+	}
+	else if (right_column(i, forest_size)) //but not the corners
+	{
+		neighbours_plus_shape[0] = forest_string[i - 1];
+		neighbours_plus_shape[1] = forest_string[i - forest_size];
+		neighbours_plus_shape[2] = forest_string[i + forest_size];
+		*num_plus = 3;
+		neighbours_total[0] = forest_string[i - 1];
+		neighbours_total[1] = forest_string[i - forest_size];
+		neighbours_total[2] = forest_string[i + forest_size];
+		neighbours_total[3] = forest_string[i - forest_size - 1];
+		neighbours_total[4] = forest_string[i + forest_size - 1];
+		*num_total = 5;
+	}
+	else// not on the borders of the forest
+	{
+		neighbours_plus_shape[0] = forest_string[i + 1];
+		neighbours_plus_shape[1] = forest_string[i - forest_size];
+		neighbours_plus_shape[2] = forest_string[i - 1];
+		neighbours_plus_shape[3] = forest_string[i + forest_size];
+		*num_plus = 4;
+		neighbours_total[0] = forest_string[i + 1];
+		neighbours_total[1] = forest_string[i - forest_size];
+		neighbours_total[2] = forest_string[i + forest_size];
+		neighbours_total[3] = forest_string[i - 1];
+		neighbours_total[4] = forest_string[i - forest_size - 1];
+		neighbours_total[5] = forest_string[i - forest_size + 1];
+		neighbours_total[6] = forest_string[i + forest_size - 1];
+		neighbours_total[7] = forest_string[i + forest_size + 1];
+		*num_total = 8;
+	}
+}
+
+bool top_row(int i, int forest_size)
+{
+	return (i / forest_size == 0);
+}
+
+bool bottom_row(int i, int forest_size)
+{
+	return (i / forest_size == forest_size-1);
+}
+
+bool left_column(int i, int forest_size)
+{
+	return (i % forest_size == 0);
+}
+bool right_column(int i, int forest_size)
+{
+	return (i % forest_size == forest_size - 1);
+}
+
+void Check_neighbours_and_update_cell(int i, char* forest_string, char* neighbours_total, char* neighbours_plus_shape, int* num_total, int* num_plus,char *next_step_forest)
+{
+	int j, tree_count = 0, no_fire_around_tree = 1;
+	if (forest_string[i] == 'F')
+	{
+		next_step_forest[i] = 'G';
+	}
+	else if (forest_string[i] == 'T')
+	{
+		for (j = 0; j < *num_plus; j++)
+		{
+			if (neighbours_plus_shape[j] == 'F')
+			{
+				no_fire_around_tree = 0;
+			}
+		}
+		if (no_fire_around_tree == 1)// there is no fire around the tree
+			next_step_forest[i] = 'T';
+		else//there is fire next to the tree
+			next_step_forest[i] = 'F';
+	}
+	else// forest_string[i] = 'G'
+	{
+		for (j = 0; j < *num_total; j++)
+		{
+			if (neighbours_total[j] == 'T')
+			{
+				tree_count++;
+			}
+		}
+		if (tree_count > 1)
+			next_step_forest[i] = 'T';
+		else
+			next_step_forest[i] = 'G';
+	}
+}
