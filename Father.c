@@ -17,17 +17,16 @@ int main(int argc, char* argv[])
 	forest_size = (int)line[0] - '0';
 	fgets(line, sizeof(line), file_pointer);
 	num_of_gens = (int)line[0] - '0';
+	free(line);
 	int num_of_trees = forest_size*forest_size;
-	printf("%d %d %d", forest_size, num_of_gens, num_of_trees); //for testing
-	char* str = get_forest(num_of_trees, file_pointer);
+	char* forest = get_forest(num_of_trees, file_pointer);
 	fclose(file_pointer);
-	printf("%s", str);// for testing
-	create_output_file(str, num_of_gens);
+	create_output_file(forest, num_of_gens);
 	return 0;
 }
 
-char *get_forest(int forest_size,  FILE* file_pointer ) {
-	char *forest = malloc((forest_size+1) * sizeof(char));
+char *get_forest(int num_of_trees,  FILE* file_pointer ) {
+	char *forest = malloc((num_of_trees +1) * sizeof(char));
 	char current_char;
 	int i = 0;
 	while ((current_char = (char)fgetc(file_pointer)) != EOF){
@@ -97,7 +96,7 @@ int create_output_file(char *forest, int num_of_gens) {
 	{
 		int num_of_burned = get_num_of_burned(forest);
 		int num_length = snprintf(NULL, 0, "%d", num_of_burned);
-		int line_size = num_length + strlen(forest) + 15;
+		int line_size = num_length + strlen(forest) + EXRTA_CHARECTERS;
 		char *line = malloc((line_size) * sizeof(char));
 		snprintf(line, line_size, "%s - %d\n",forest, num_of_burned);
 		write_to_file(file_pointer, line);
