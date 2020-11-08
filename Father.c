@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 		printf("couldn't read file");
 		exit(1);
 	}
-	char *line = malloc(sizeof(char)*2);
+	char *line = malloc(sizeof(char)*4);
 	int num_of_gens = 0, forest_size = 0;
 	fgets(line, sizeof(line), file_pointer);
 	forest_size = (int)line[0] - '0';
@@ -41,7 +41,7 @@ char *get_forest(int forest_size,  FILE* file_pointer ) {
 	return forest;
 }
 
-int call_process(char* command_line) {
+int call_process(char *command_line) {
 	STARTUPINFO	startinfo = { sizeof(STARTUPINFO), NULL, 0 };
 	PROCESS_INFORMATION pi;
 	PROCESS_INFORMATION* ProcessInfoPtr = &pi;
@@ -49,7 +49,7 @@ int call_process(char* command_line) {
 	WCHAR w_command_line[COMMAND_LINE_MAX_LENGTH];
 	size_t w_command_line_size;
 	mbstowcs_s(&w_command_line_size, w_command_line, COMMAND_LINE_MAX_LENGTH, command_line, COMMAND_LINE_MAX_LENGTH);
-	if (!CreateProcess(NULL, command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &startinfo, ProcessInfoPtr))
+	if (!CreateProcess(NULL, w_command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &startinfo, ProcessInfoPtr))
 	{
 		printf("Failed to create process (%d).\n", GetLastError());
 		return FAILURE_CODE;
