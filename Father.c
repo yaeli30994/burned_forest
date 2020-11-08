@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
 	}
 	char *line = malloc(sizeof(char)*4);
 	int num_of_gens = 0, forest_size = 0;
+	// get the first 2 lines (size of forest and generations) and convert them to int
 	fgets(line, sizeof(line), file_pointer);
 	forest_size = (int)line[0] - '0';
 	fgets(line, sizeof(line), file_pointer);
@@ -26,6 +27,8 @@ int main(int argc, char* argv[])
 }
 
 char *get_forest(int num_of_trees,  FILE* file_pointer ) {
+	// the function gets the number of trees in the forest and the file pointer
+	// and returns the forest as a string
 	char *forest = malloc((num_of_trees +1) * sizeof(char));
 	char current_char;
 	int i = 0;
@@ -34,13 +37,13 @@ char *get_forest(int num_of_trees,  FILE* file_pointer ) {
 			forest[i] = current_char;
 			i++;
 		}
-
 	} 
 	forest[i] = '\0';
 	return forest;
 }
 
 int call_process(char *command_line) {
+	// calls a process using the given commad line
 	STARTUPINFO	startinfo = { sizeof(STARTUPINFO), NULL, 0 };
 	PROCESS_INFORMATION pi;
 	PROCESS_INFORMATION* ProcessInfoPtr = &pi;
@@ -60,6 +63,8 @@ int call_process(char *command_line) {
 }
 
 int get_num_of_burned(char* forest) {
+	// this function calculates the number of burned trees in the furest using son.exe
+	//it creates the needed command line and calls call_process to run it
 	int burned_trees_num = 0;
 	char command_line[COMMAND_LINE_MAX_LENGTH];
 	snprintf(command_line, COMMAND_LINE_MAX_LENGTH, "Son.exe %s", forest);
@@ -73,6 +78,7 @@ int get_num_of_burned(char* forest) {
 }
 
 int write_to_file(FILE* file_ptr, char* line) {
+	// this function writes the given line to the given file
 	if (EOF == fputs(line, file_ptr))
 	{
 		printf("Failed to write to file.\n");
@@ -87,6 +93,7 @@ int write_to_file(FILE* file_ptr, char* line) {
 }
 
 int create_output_file(char *forest, int num_of_gens) {
+	// this function creates output.txt and calles all necessary functions in order to do so
 	FILE* file_pointer = NULL;
 	if (fopen_s(&file_pointer, "output.txt", "w") != 0) {
 		printf("couldn't open file");
