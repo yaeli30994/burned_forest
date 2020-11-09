@@ -13,7 +13,7 @@ char* get_forest(int forest_size, FILE* file_pointer);
 int call_process(char* command_line);
 int get_num_of_burned(char* forest);
 int write_to_file(FILE* file_ptr, char* line);
-int create_output_file(char* forest, int num_of_gens);
+int create_output_file(char* forest, int num_of_gens, int forest_size);
 char* forest_next_step(int forest_size, char* forest_string);
 void Get_neighbours(int i, char* forest_string, int forest_size, char* neighbours_total, char* neighbours_plus_shape, int* num_total, int* num_plus);
 bool top_row(int i, int forest_size);
